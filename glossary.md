@@ -252,14 +252,14 @@ and align *before* building (grilling). Everything else is refinement on top of 
 - **Definition:** A relentless interview where the agent refuses to write code and instead interrogates *you* to sharpen a plan until you reach shared understanding. Pocock's most popular skill; sessions can run ~45 minutes and 50+ questions.
 - **When to use:** At the start of any non-trivial change, when the spec is fuzzy, or when you sense you haven't thought it through yourself.
 - **Pitfalls:** Skipping it ("just build it") reintroduces misalignment. Grilling *trivial* tasks wastes time — reserve it for decisions with real branching.
-- **Example:** "/grill-me — I want to add team billing. Interrogate me one question at a time."
+- **Example:** "Before we build the stock screener's options scanner, grill me on it. Ask me one question at a time about how I actually want it to work, and don't write any code until we've thought it all the way through together."
 - **Source:** [mattpocock/skills — grill-me](https://github.com/mattpocock/skills/blob/main/skills/productivity/grill-me/SKILL.md)
 
 ### One question at a time
 - **Definition:** A grilling rule: ask one question, wait for the answer, then ask the next. "Asking multiple questions at once is bewildering."
 - **When to use:** Any clarifying interview; it keeps your working memory free and lets each answer inform the next question.
 - **Pitfalls:** Batching questions overwhelms you and yields shallow answers. The agent should also offer its own *recommended* answer with each question.
-- **Example:** "Ask me one question at a time and include your recommended answer for each."
+- **Example:** "As we plan the home server, ask me one question at a time and wait for my answer before the next one. Each time, tell me which option you'd recommend so I'm not guessing."
 - **Source:** [mattpocock/skills — grilling](https://github.com/mattpocock/skills/blob/main/skills/productivity/grill-me/SKILL.md)
 
 ### Design tree / decision tree
@@ -431,7 +431,7 @@ and align *before* building (grilling). Everything else is refinement on top of 
 - **Definition:** Running multiple subagents concurrently on independent units of work.
 - **When to use:** Independent tasks (e.g. separate modules) with no shared mutable state.
 - **Pitfalls:** Conflicting edits / merge collisions when "independent" tasks actually overlap.
-- **Example:** "One agent per service in the monorepo, each in its own git worktree."
+- **Example:** "Have one helper check my home server's security while a separate helper tests the music tool's code at the same time. They're separate jobs that don't touch the same files, so run them together to save time."
 - **Source:** [obra/superpowers](https://github.com/obra/superpowers/)
 
 ### Git worktrees (isolated workspaces)
@@ -477,7 +477,7 @@ and align *before* building (grilling). Everything else is refinement on top of 
 - **Definition:** A four-phase process — Root Cause Investigation → Pattern Analysis → Hypothesis & Testing → Implementation — with the rule "NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST."
 - **When to use:** Any bug, especially ones that "seem simple" (the rule guards against skipping investigation).
 - **Pitfalls:** Named anti-patterns: "just try changing X and see," proposing fixes before understanding, changing many things at once, "one more fix attempt" after two failures.
-- **Example:** "Reproduce → diff recent changes → form one hypothesis → minimal test change → verify."
+- **Example:** "My stock screener just crashed. Before you change anything, figure out *why* it broke first — track down the actual cause and explain it to me. Don't just try random fixes and hope one of them works."
 - **Source:** [obra/superpowers — systematic-debugging](https://github.com/obra/superpowers/blob/main/skills/systematic-debugging/SKILL.md)
 
 ### Debugging discipline (reproduce → minimize → hypothesize → instrument → fix → post-mortem)
@@ -533,14 +533,14 @@ and align *before* building (grilling). Everything else is refinement on top of 
 - **Definition:** Adding validation at multiple layers *after* the root cause is found (and, in security, layering independent controls).
 - **When to use:** Hardening a fix or a security boundary so one failure doesn't cascade.
 - **Pitfalls:** Adding layers as a *substitute* for finding the root cause; redundant checks that hide where the real problem lives.
-- **Example:** "Validate at the API boundary and again at the DB write after fixing the source of bad data."
+- **Example:** "Don't protect my server's storage with just one safeguard. Lock it down in layers — a firewall, a login key, and a limited-access account — so that if one of them ever fails, the others still keep my files safe."
 - **Source:** [obra/superpowers — systematic-debugging](https://github.com/obra/superpowers/blob/main/skills/systematic-debugging/SKILL.md)
 
 ### Verification before completion
 - **Definition:** A gate where the agent must confirm a fix actually works (run it, observe behavior) before declaring the task done.
 - **When to use:** End of any change, to stop "I think this works" hand-offs.
 - **Pitfalls:** Verifying with the wrong signal (compiles ≠ works); skipping because the change "looks right."
-- **Example:** "Run the app and check the observed output against the success criteria before saying done."
+- **Example:** "After you make the change to my server, don't just tell me it's done — actually run it and show me proof it works the way I asked before you call it finished."
 - **Source:** [obra/superpowers](https://github.com/obra/superpowers/)
 
 ### Self-review (requesting / receiving code review)
@@ -561,7 +561,7 @@ and align *before* building (grilling). Everything else is refinement on top of 
 - **Definition:** "Differential review" analyzes a diff against git history; "variant analysis" hunts for other instances of a found bug pattern across the codebase.
 - **When to use:** Auditing changes for introduced vulnerabilities, and sweeping for repeats of a known flaw.
 - **Pitfalls:** Differential review misses pre-existing latent bugs; variant analysis floods false positives without a precise pattern.
-- **Example:** "Found one missing auth check — now search for the same call pattern elsewhere."
+- **Example:** "You found one place where my server was accidentally left open to the network. Now go look for any other settings that were left open in that same way, and list every one you find."
 - **Source:** [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills)
 
 ---
@@ -665,7 +665,7 @@ and align *before* building (grilling). Everything else is refinement on top of 
 - **Definition:** Touch only what the request requires, match existing style, don't refactor working code; remove only imports/functions *your* edits orphaned, and flag (don't delete) pre-existing dead code.
 - **When to use:** Editing within an existing codebase you don't fully own.
 - **Pitfalls:** Drive-by refactors that balloon the diff and break unrelated things.
-- **Example:** "Fix the one function I asked about; leave the adjacent ugly-but-working code alone, just note it."
+- **Example:** "Just fix the one broken function in my screener. Leave all the other code that's already working exactly as it is — if you notice something messy nearby, point it out to me, but don't change it."
 - **Source:** [andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills/blob/main/CLAUDE.md)
 
 ### YAGNI / DRY
