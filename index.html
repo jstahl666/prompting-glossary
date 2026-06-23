@@ -8,6 +8,7 @@
   :root{
     --bg:#0F0F1A; --card:#1A1B2E; --card2:#15162447; --border:#28294A;
     --text:#E8E8F4; --dim:#9090BB; --accent:#315CFD; --accent-soft:#315CFD22;
+    --accent-text:#8FA4FF; /* lighter accent for text — passes AA (>=4.5:1) on the dark cards */
     --success:#3DB86A; --hl:#FFD86b; --hl-bg:#5a4a1066;
   }
   *{box-sizing:border-box}
@@ -21,7 +22,7 @@
   header{padding:32px 0 8px}
   h1{font-size:26px;margin:0 0 4px;letter-spacing:-.01em}
   .sub{color:var(--dim);font-size:15px;margin:0}
-  .sub a{color:var(--accent);text-decoration:none}
+  .sub a{color:var(--accent-text);text-decoration:none}
 
   /* sticky search */
   .searchbar{position:sticky;top:0;background:var(--bg);padding:16px 0 8px;z-index:10}
@@ -33,21 +34,21 @@
   #q:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
   #q::placeholder{color:var(--dim)}
   .mag{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:17px}
-  #clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;
-    color:var(--dim);font-size:20px;cursor:pointer;padding:6px;line-height:1;display:none}
+  #clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;
+    color:var(--dim);font-size:20px;cursor:pointer;padding:10px;line-height:1;display:none}
   #clear:hover{color:var(--text)}
 
   .label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:14px 2px 8px}
   .chips{display:flex;flex-wrap:wrap;gap:8px}
   .chip{
     border:1px solid var(--border);background:var(--card);color:var(--dim);
-    padding:7px 13px;border-radius:999px;font-size:13.5px;cursor:pointer;white-space:nowrap;
+    padding:9px 14px;border-radius:999px;font-size:13.5px;cursor:pointer;white-space:nowrap;
     transition:background .12s,color .12s,border-color .12s;
   }
-  .chip:hover{color:var(--text);border-color:var(--accent)}
+  .chip:hover{color:var(--text);border-color:var(--accent-text)}
   .chip.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
   .chip.starter{border-style:dashed}
-  .chip.starter:before{content:"›  ";color:var(--accent)}
+  .chip.starter:before{content:"›  ";color:var(--accent-text)}
 
   .count{color:var(--dim);font-size:13px;margin:18px 2px 10px}
 
@@ -57,26 +58,27 @@
   }
   .card .top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:6px}
   .term{font-size:18px;font-weight:700;letter-spacing:-.01em}
-  .badge{flex:none;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
-    color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:3px 8px}
+  .badge{flex:none;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--accent-text);background:var(--accent-soft);border-radius:6px;padding:3px 8px}
   .row{margin:7px 0;font-size:14.5px}
   .row .k{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
     color:var(--dim);margin-right:6px;vertical-align:1px}
   .ex{background:var(--card2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;
     padding:9px 12px;margin-top:9px;color:var(--text);font-size:14.5px}
-  .ex .k{color:var(--accent)}
-  .more{color:var(--dim);font-size:13px;cursor:pointer;user-select:none;margin-top:8px;display:inline-block}
+  .ex .k{color:var(--accent-text)}
+  .more{color:var(--dim);font-size:13px;cursor:pointer;user-select:none;margin-top:2px;
+    display:inline-block;padding:9px 8px 9px 0}
   .more:hover{color:var(--text)}
   .extra{display:none;margin-top:6px}
   .extra.open{display:block}
-  .src a{color:var(--accent);text-decoration:none;font-size:13px}
+  .src a{color:var(--accent-text);text-decoration:none;font-size:13px}
   .src a:hover{text-decoration:underline}
   mark{background:var(--hl-bg);color:var(--hl);border-radius:3px;padding:0 1px}
   .empty{color:var(--dim);text-align:center;padding:40px 0;font-size:15px}
   code{background:#0c0c16;border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:.9em}
   em{color:#c9c9ee}
   footer{color:var(--dim);font-size:12.5px;text-align:center;margin-top:36px;border-top:1px solid var(--border);padding-top:18px}
-  footer a{color:var(--accent);text-decoration:none}
+  footer a{color:var(--accent-text);text-decoration:none}
 </style>
 </head>
 <body>
@@ -132,29 +134,35 @@
     "double-check the work"
   ];
 
-  // ---- synonyms so intent words find the right entries ----
-  const SYN = {
-    feedback:["critique","review","grill","honest","flatter","flattery","sycophant","argue","pushback"],
-    flattery:["agree","yes","glaze","honest","friction","grill","rubber"],
-    bug:["broken","crash","crashed","error","fails","failing","wrong","debug","fix"],
-    fix:["bug","broken","debug","repair","crash"],
-    plan:["design","planning","brainstorm","spec","blueprint","think"],
-    question:["grill","ask","clarify","interview"],
-    example:["examples","sample","few-shot","fewshot","demonstrate","show"],
-    short:["concise","brief","length","trim","tight"],
-    reverb:["echo","wet","reverby"],
-    separate:["isolate","split","extract","stem","vocal"],
-    safe:["security","secure","protect","hardening","lock","hack","trust"],
-    test:["verify","check","verification","prove","confirm"],
-    teach:["learn","lesson","tutor","mentor","study"],
-    rules:["constraint","constitution","constraints","standing"],
-    role:["persona","act","pretend","expert"],
-    reasoning:["step","steps","chain","think","reason"],
-    simple:["simplest","simplify","overengineer","minimal","yagni"],
-    parallel:["agents","concurrent","worktree","subagent"],
-    skill:["skills","command","slash"],
-    plain:["jargon","non-technical","beginner","simple"]
-  };
+  // ---- synonym clusters: any word in a cluster expands to the others (bidirectional),
+  //      so "honest"/"agree"/"overbuild" find the right entries even when that exact word
+  //      isn't in the text. Targets are stemmed+prefix-matched, so "argu" hits "argumentative".
+  const CLUSTERS = [
+    ["feedback","critique","review","honest","flatter","flattery","agree","agreeable","sycophant","sycophancy","argue","argumentative","friction","grill","pushback"],
+    ["bug","broken","crash","error","fail","debug","fix","defect"],
+    ["plan","design","brainstorm","spec","blueprint","planning"],
+    ["question","ask","grill","clarify","interview","interrogate"],
+    ["example","sample","fewshot","demonstrate","illustrate"],
+    ["short","concise","brief","length","trim","tight","terse"],
+    ["safe","security","secure","protect","hardening","lock","trust","hack","vulnerability"],
+    ["test","verify","check","confirm","prove","verification","validate"],
+    ["teach","learn","lesson","tutor","mentor","study","training","practice"],
+    ["simple","simplify","overengineer","overbuild","minimal","yagni","complexity"],
+    ["reasoning","reason","step","chain","think","thought","logic"],
+    ["role","persona","act","expert","pretend","character"],
+    ["parallel","agent","subagent","concurrent","worktree"],
+    ["rule","constraint","constitution","standing","guardrail"],
+    ["hallucinate","hallucination","invent","fabricate","false","ground","grounding"],
+    ["skill","command","slash"],
+    ["plain","jargon","beginner","simple"]
+  ];
+  // word -> array of related words (union across every cluster containing it)
+  const SYNMAP = {};
+  CLUSTERS.forEach(c=>c.forEach(w=>{
+    SYNMAP[w] = SYNMAP[w] || new Set();
+    c.forEach(o=>{ if(o!==w) SYNMAP[w].add(o); });
+  }));
+  Object.keys(SYNMAP).forEach(k=>SYNMAP[k]=[...SYNMAP[k]]);
 
   // ---- text helpers ----
   function stripMd(s){
@@ -171,7 +179,8 @@
     let h = esc(s);
     h = h.replace(/\[([^\]]+)\]\(([^)]+)\)/g,(m,t,u)=>'<a href="'+u+'" target="_blank" rel="noopener">'+t+'</a>');
     h = h.replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>");
-    h = h.replace(/(^|[^*])\*([^*]+)\*/g,"$1<em>$2</em>");
+    // italic only when the *…* hugs words (no space just inside), so "3 * 4" / "*.md" survive
+    h = h.replace(/\*(?!\s)([^*\n]+?)(?<!\s)\*/g,"<em>$1</em>");
     h = h.replace(/`([^`]+)`/g,"<code>$1</code>");
     return h;
   }
@@ -192,7 +201,7 @@
   const STOP = new Set(("a an the to my i im i'm of for on in it is do how can with want trying me your you and or "
     + "get got make made let just like need way about this that these those from not into use using when what so "
     + "really very give it's its dont don't won't will be have has").split(" "));
-  const WEIGHT = {term:10, when:4, example:4, definition:3, pitfalls:2, section:2};
+  const WEIGHT = {term:10, when:5, example:5, definition:3, pitfalls:2, section:1};
   const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
 
   function tokens(q){
@@ -200,12 +209,27 @@
       .filter(t=>t.length>1 && !STOP.has(t));
   }
 
-  // word-boundary matcher: "test" matches "testing" but "get" does NOT match "budget"
+  // light stemmer: normalize a query word to its root so plurals/verb forms match the data.
+  // "hallucinations"->"hallucination", "templates"->"template", "agreeing"->"agree", "boxes"->"box"
+  function stem(t){
+    if(t.length<=4) return t;
+    if(/(ches|shes|sses|xes|zes)$/.test(t)) return t.slice(0,-2);
+    if(/ing$/.test(t) && t.length>5) return t.slice(0,-3);
+    if(/ed$/.test(t) && t.length>5) return t.slice(0,-2);
+    if(/[^s]s$/.test(t)) return t.slice(0,-1);   // plural 's' (not 'ss')
+    return t;
+  }
+
+  // word-boundary matcher: matches the stem as a word-prefix, so it catches inflected forms.
   function wordRe(t){ return new RegExp("\\b"+escRe(t),"i"); }
 
   function scoreEntry(e, tokRes, rawQ){
     let score=0;
-    if(rawQ.length>2 && e._all.includes(rawQ)) score+=8; // whole-phrase bonus
+    // exact / leading term-name match wins — typing a term's name should rank that term first
+    if(rawQ && (e._f.term===rawQ || e._f.term.startsWith(rawQ+" "))) score+=15;
+    // whole-phrase bonus: only for real multi-word phrases, so a short token like "amp"
+    // doesn't substring-match inside "ex·amp·le" / "s·amp·le".
+    if(rawQ.includes(" ") && e._all.includes(rawQ)) score+=8;
     for(const tr of tokRes){
       let hit=false;
       for(const f in WEIGHT){
@@ -213,7 +237,7 @@
       }
       for(const sre of tr.syn){               // synonyms, reduced weight
         for(const f in WEIGHT){
-          if(e._f[f] && sre.test(e._f[f])){ score += WEIGHT[f]*0.35; hit=true; }
+          if(e._f[f] && sre.test(e._f[f])){ score += WEIGHT[f]*0.45; hit=true; }
         }
       }
       if(hit) score+=1;
@@ -221,14 +245,14 @@
     return score;
   }
 
-  // highlight whole words that begin with a query token (boundary-anchored, no mid-word hits)
-  function highlight(html, toks){
-    if(!toks.length) return html;
-    const pat = toks.map(escRe).filter(Boolean);
+  // highlight whole words that begin with a query stem; skip HTML tags AND entities (&amp; etc.)
+  function highlight(html, stems){
+    if(!stems || !stems.length) return html;
+    const pat = stems.map(escRe).filter(Boolean);
     if(!pat.length) return html;
     const re = new RegExp("\\b("+pat.join("|")+")\\w*","gi");
-    return html.split(/(<[^>]+>)/).map(part=>{
-      if(part.startsWith("<")) return part;
+    return html.split(/(<[^>]+>|&[a-z0-9#]+;)/gi).map(part=>{
+      if(part.startsWith("<") || part.startsWith("&")) return part;
       return part.replace(re,"<mark>$&</mark>");
     }).join("");
   }
@@ -279,8 +303,12 @@
 
     let list = DATA.filter(e=> activeCat===0 || e.section_num===activeCat);
 
+    const stems = toks.map(stem);
     if(toks.length || rawQ.length>2){
-      const tokRes = toks.map(t=>({re:wordRe(t), syn:(SYN[t]||[]).map(wordRe)}));
+      const tokRes = stems.map((s,i)=>{
+        const syn = SYNMAP[s] || SYNMAP[toks[i]] || [];
+        return {re:wordRe(s), syn:syn.map(w=>wordRe(stem(w)))};
+      });
       let scored = list.map(e=>({e, s:scoreEntry(e,tokRes,rawQ)}))
                        .filter(x=>x.s>0)
                        .sort((a,b)=> b.s-a.s || a.e.section_num-b.e.section_num);
@@ -306,16 +334,16 @@
     const out = list.map(e=>{
       const badge = CAT_LABEL[e.section_num]||e.section;
       let h = '<div class="card">';
-      h += '<div class="top"><span class="term">'+highlight(mdToHtml(e.term),toks)+'</span>'
+      h += '<div class="top"><span class="term">'+highlight(mdToHtml(e.term),stems)+'</span>'
          + '<span class="badge">'+esc(badge)+'</span></div>';
-      h += '<div class="row">'+highlight(mdToHtml(e.definition),toks)+'</div>';
+      h += '<div class="row">'+highlight(mdToHtml(e.definition),stems)+'</div>';
       if(e.example){
-        h += '<div class="ex"><span class="k">Try typing</span>'+highlight(mdToHtml(e.example),toks)+'</div>';
+        h += '<div class="ex"><span class="k">Try typing</span>'+highlight(mdToHtml(e.example),stems)+'</div>';
       }
       // extra (when / pitfalls / source) behind a toggle
       let extra='';
-      if(e.when) extra+='<div class="row"><span class="k">When</span>'+highlight(mdToHtml(e.when),toks)+'</div>';
-      if(e.pitfalls) extra+='<div class="row"><span class="k">Watch out</span>'+highlight(mdToHtml(e.pitfalls),toks)+'</div>';
+      if(e.when) extra+='<div class="row"><span class="k">When</span>'+highlight(mdToHtml(e.when),stems)+'</div>';
+      if(e.pitfalls) extra+='<div class="row"><span class="k">Watch out</span>'+highlight(mdToHtml(e.pitfalls),stems)+'</div>';
       if(e.source) extra+='<div class="row src"><span class="k">Source</span>'+mdToHtml(e.source)+'</div>';
       if(extra){
         h += '<span class="more" data-id="'+e.id+'">＋ when to use &amp; pitfalls</span>';
