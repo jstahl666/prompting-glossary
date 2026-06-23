@@ -829,18 +829,21 @@ and align *before* building (grilling). Everything else is refinement on top of 
 - **Definition:** Where a skill lives sets who can use it and precedence: Enterprise (managed) > Personal (`~/.claude/skills/`) > Project (`.claude/skills/`). Plugin skills are namespaced `plugin:skill`.
 - **When to use:** Personal for skills across all your projects; Project committed to a repo for the team; plugin/managed for distribution.
 - **Pitfalls:** Custom skills do NOT sync across surfaces (claude.ai, API, Claude Code are separate); name clashes resolve by precedence.
+- **Example:** Put a personal helper at `~/.claude/skills/commit-style/SKILL.md` so it works in every project; commit a team one to `.claude/skills/` in the repo so teammates get it on clone.
 - **Source:** [Claude Code — skills](https://code.claude.com/docs/en/skills)
 
 ### Token budget (skill listing)
 - **Definition:** The bounded space skills occupy. Per-skill metadata ≈ 100 tokens; SKILL.md body target <5k tokens / 500 lines; the listing budget scales ~1% of the model's context window. Auto-compaction re-attaches invoked skills within a combined budget, keeping the first ~5k tokens of each.
 - **When to use:** When you have many skills, or long sessions where compaction may drop older ones.
 - **Pitfalls:** Overflowing the listing budget drops least-used skills' descriptions (run `/doctor`).
+- **Example:** Keep a SKILL.md body under ~500 lines and push the long reference material into a separate `reference.md` the skill loads only when needed, so the always-listed part stays cheap.
 - **Source:** [Claude Code — skills](https://code.claude.com/docs/en/skills)
 
 ### Security / trust
 - **Definition:** Treat installing a skill like installing software — a malicious skill can direct Claude to misuse tools or exfiltrate data. Audit all bundled files; project-skill `allowed-tools` only takes effect after you accept workspace trust.
 - **When to use:** Before installing or trusting any third-party skill.
 - **Pitfalls:** Skills that fetch external URLs are especially risky (fetched content may carry injected instructions).
+- **Example:** Before trusting a downloaded skill, open every bundled file and read its scripts — "this skill runs `scripts/setup.sh`; show me exactly what that does before I accept workspace trust."
 - **Source:** [Anthropic — Agent Skills overview](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)
 
 ---
@@ -923,12 +926,14 @@ and align *before* building (grilling). Everything else is refinement on top of 
 - **Definition:** Develop a skill with one Claude instance ("Claude A," author/refiner) and test it with *fresh* instances ("Claude B," the user) on real tasks, bringing observed gaps back to A.
 - **When to use:** Iteratively refining skills based on real behavior rather than assumptions.
 - **Pitfalls:** Iterating from assumptions instead of observed Claude B behavior.
+- **Example:** In a fresh session (Claude B), run "use the `pdf-fill` skill to complete this form," watch where it stumbles, then bring that transcript back to the authoring session (Claude A): "here's where it guessed the field names — tighten the instructions."
 - **Source:** [Anthropic — skill best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
 
 ### Plan-validate-execute
 - **Definition:** Have Claude first emit a structured plan (e.g. `changes.json`), validate it with a script, *then* execute — catching errors before applying changes.
 - **When to use:** Batch operations, destructive changes, or high-stakes tasks.
 - **Pitfalls:** Skipping the intermediate artifact and letting Claude apply unverified changes.
+- **Example:** "First write the renames you'll make to `changes.json` and run `validate.py` on it. Don't touch any files until the validation passes, then apply it."
 - **Source:** [Anthropic — skill best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
 
 ---
