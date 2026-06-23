@@ -216,7 +216,7 @@
     if(/(ches|shes|sses|xes|zes)$/.test(t)) return t.slice(0,-2);
     if(/ing$/.test(t) && t.length>5) return t.slice(0,-3);
     if(/ed$/.test(t) && t.length>5) return t.slice(0,-2);
-    if(/[^s]s$/.test(t)) return t.slice(0,-1);   // plural 's' (not 'ss')
+    if(/s$/.test(t) && !/(ss|us|is)$/.test(t)) return t.slice(0,-1);  // plural 's' (not ss/-us/-is)
     return t;
   }
 
