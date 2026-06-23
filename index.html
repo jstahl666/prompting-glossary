@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompting &amp; Skills — searchable glossary</title>
+<style>
+  :root{
+    --bg:#0F0F1A; --card:#1A1B2E; --card2:#15162447; --border:#28294A;
+    --text:#E8E8F4; --dim:#9090BB; --accent:#315CFD; --accent-soft:#315CFD22;
+    --success:#3DB86A; --hl:#FFD86b; --hl-bg:#5a4a1066;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--text);
+    font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding:0 16px 80px;
+  }
+  .wrap{max-width:860px;margin:0 auto}
+  header{padding:32px 0 8px}
+  h1{font-size:26px;margin:0 0 4px;letter-spacing:-.01em}
+  .sub{color:var(--dim);font-size:15px;margin:0}
+  .sub a{color:var(--accent);text-decoration:none}
+
+  /* sticky search */
+  .searchbar{position:sticky;top:0;background:var(--bg);padding:16px 0 8px;z-index:10}
+  .searchbox{position:relative}
+  #q{
+    width:100%;padding:15px 44px 15px 44px;font-size:17px;color:var(--text);
+    background:var(--card);border:1px solid var(--border);border-radius:12px;outline:none;
+  }
+  #q:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  #q::placeholder{color:var(--dim)}
+  .mag{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:17px}
+  #clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;
+    color:var(--dim);font-size:20px;cursor:pointer;padding:6px;line-height:1;display:none}
+  #clear:hover{color:var(--text)}
+
+  .label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:14px 2px 8px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{
+    border:1px solid var(--border);background:var(--card);color:var(--dim);
+    padding:7px 13px;border-radius:999px;font-size:13.5px;cursor:pointer;white-space:nowrap;
+    transition:background .12s,color .12s,border-color .12s;
+  }
+  .chip:hover{color:var(--text);border-color:var(--accent)}
+  .chip.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+  .chip.starter{border-style:dashed}
+  .chip.starter:before{content:"›  ";color:var(--accent)}
+
+  .count{color:var(--dim);font-size:13px;margin:18px 2px 10px}
+
+  .card{
+    background:var(--card);border:1px solid var(--border);border-radius:12px;
+    padding:14px 16px;margin-bottom:10px;
+  }
+  .card .top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:6px}
+  .term{font-size:18px;font-weight:700;letter-spacing:-.01em}
+  .badge{flex:none;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:3px 8px}
+  .row{margin:7px 0;font-size:14.5px}
+  .row .k{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+    color:var(--dim);margin-right:6px;vertical-align:1px}
+  .ex{background:var(--card2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;
+    padding:9px 12px;margin-top:9px;color:var(--text);font-size:14.5px}
+  .ex .k{color:var(--accent)}
+  .more{color:var(--dim);font-size:13px;cursor:pointer;user-select:none;margin-top:8px;display:inline-block}
+  .more:hover{color:var(--text)}
+  .extra{display:none;margin-top:6px}
+  .extra.open{display:block}
+  .src a{color:var(--accent);text-decoration:none;font-size:13px}
+  .src a:hover{text-decoration:underline}
+  mark{background:var(--hl-bg);color:var(--hl);border-radius:3px;padding:0 1px}
+  .empty{color:var(--dim);text-align:center;padding:40px 0;font-size:15px}
+  code{background:#0c0c16;border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:.9em}
+  em{color:#c9c9ee}
+  footer{color:var(--dim);font-size:12.5px;text-align:center;margin-top:36px;border-top:1px solid var(--border);padding-top:18px}
+  footer a{color:var(--accent);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Prompting &amp; Skills</h1>
+    <p class="sub">A searchable glossary of 122 terms for writing better prompts &amp; skills.
+      Search by keyword <em>or</em> by what you're trying to do.</p>
+  </header>
+
+  <div class="searchbar">
+    <div class="searchbox">
+      <span class="mag">⌕</span>
+      <input id="q" type="text" autocomplete="off" spellcheck="false"
+             placeholder="Try: “get honest feedback”, “fix a bug”, “short answers”…">
+      <button id="clear" title="Clear" aria-label="Clear search">×</button>
+    </div>
+  </div>
+
+  <div class="label">I'm trying to…</div>
+  <div class="chips" id="starters"></div>
+
+  <div class="label">Filter by category</div>
+  <div class="chips" id="cats"></div>
+
+  <div class="count" id="count"></div>
+  <div id="results"></div>
+
+  <footer>
+    Source of truth: <a href="https://github.com/jstahl666/prompting-glossary" target="_blank" rel="noopener">github.com/jstahl666/prompting-glossary</a>
+    · search runs entirely in your browser
+  </footer>
+</div>
+
+<script src="glossary-data.js"></script>
+<script>
+(function(){
+  const DATA = window.GLOSSARY || [];
+
+  // ---- short category labels for the chips ----
+  const CAT_LABEL = {1:"Core",2:"Structure",3:"Techniques",4:"Alignment",5:"Planning",
+    6:"Debugging",7:"Architecture",8:"Learning",9:"Skill mechanics",10:"Skill design"};
+
+  // ---- "I'm trying to…" starters (text typed into the box) ----
+  const STARTERS = [
+    "get honest feedback, not flattery",
+    "fix a bug the right way",
+    "plan before building",
+    "make it ask me questions first",
+    "give it examples to copy",
+    "stop it making things up",
+    "don't change my working code",
+    "double-check the work"
+  ];
+
+  // ---- synonyms so intent words find the right entries ----
+  const SYN = {
+    feedback:["critique","review","grill","honest","flatter","flattery","sycophant","argue","pushback"],
+    flattery:["agree","yes","glaze","honest","friction","grill","rubber"],
+    bug:["broken","crash","crashed","error","fails","failing","wrong","debug","fix"],
+    fix:["bug","broken","debug","repair","crash"],
+    plan:["design","planning","brainstorm","spec","blueprint","think"],
+    question:["grill","ask","clarify","interview"],
+    example:["examples","sample","few-shot","fewshot","demonstrate","show"],
+    short:["concise","brief","length","trim","tight"],
+    reverb:["echo","wet","reverby"],
+    separate:["isolate","split","extract","stem","vocal"],
+    safe:["security","secure","protect","hardening","lock","hack","trust"],
+    test:["verify","check","verification","prove","confirm"],
+    teach:["learn","lesson","tutor","mentor","study"],
+    rules:["constraint","constitution","constraints","standing"],
+    role:["persona","act","pretend","expert"],
+    reasoning:["step","steps","chain","think","reason"],
+    simple:["simplest","simplify","overengineer","minimal","yagni"],
+    parallel:["agents","concurrent","worktree","subagent"],
+    skill:["skills","command","slash"],
+    plain:["jargon","non-technical","beginner","simple"]
+  };
+
+  // ---- text helpers ----
+  function stripMd(s){
+    if(!s) return "";
+    return s
+      .replace(/\[([^\]]+)\]\([^)]*\)/g,"$1")  // [text](url) -> text
+      .replace(/[*`_]/g,"")
+      .trim();
+  }
+  function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+  // minimal markdown -> html for display (after escaping)
+  function mdToHtml(s){
+    if(!s) return "";
+    let h = esc(s);
+    h = h.replace(/\[([^\]]+)\]\(([^)]+)\)/g,(m,t,u)=>'<a href="'+u+'" target="_blank" rel="noopener">'+t+'</a>');
+    h = h.replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>");
+    h = h.replace(/(^|[^*])\*([^*]+)\*/g,"$1<em>$2</em>");
+    h = h.replace(/`([^`]+)`/g,"<code>$1</code>");
+    return h;
+  }
+
+  // searchable blob per entry (lowercased plain text), kept per field for weighting
+  DATA.forEach(e=>{
+    e._f = {
+      term: e.term.toLowerCase(),
+      when: stripMd(e.when).toLowerCase(),
+      example: stripMd(e.example).toLowerCase(),
+      definition: stripMd(e.definition).toLowerCase(),
+      pitfalls: stripMd(e.pitfalls).toLowerCase(),
+      section: (e.section||"").toLowerCase()
+    };
+    e._all = Object.values(e._f).join("  ");
+  });
+
+  const STOP = new Set(("a an the to my i im i'm of for on in it is do how can with want trying me your you and or "
+    + "get got make made let just like need way about this that these those from not into use using when what so "
+    + "really very give it's its dont don't won't will be have has").split(" "));
+  const WEIGHT = {term:10, when:4, example:4, definition:3, pitfalls:2, section:2};
+  const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+
+  function tokens(q){
+    return q.toLowerCase().replace(/[^a-z0-9'\- ]/g," ").split(/\s+/)
+      .filter(t=>t.length>1 && !STOP.has(t));
+  }
+
+  // word-boundary matcher: "test" matches "testing" but "get" does NOT match "budget"
+  function wordRe(t){ return new RegExp("\\b"+escRe(t),"i"); }
+
+  function scoreEntry(e, tokRes, rawQ){
+    let score=0;
+    if(rawQ.length>2 && e._all.includes(rawQ)) score+=8; // whole-phrase bonus
+    for(const tr of tokRes){
+      let hit=false;
+      for(const f in WEIGHT){
+        if(e._f[f] && tr.re.test(e._f[f])){ score+=WEIGHT[f]; hit=true; }
+      }
+      for(const sre of tr.syn){               // synonyms, reduced weight
+        for(const f in WEIGHT){
+          if(e._f[f] && sre.test(e._f[f])){ score += WEIGHT[f]*0.35; hit=true; }
+        }
+      }
+      if(hit) score+=1;
+    }
+    return score;
+  }
+
+  // highlight whole words that begin with a query token (boundary-anchored, no mid-word hits)
+  function highlight(html, toks){
+    if(!toks.length) return html;
+    const pat = toks.map(escRe).filter(Boolean);
+    if(!pat.length) return html;
+    const re = new RegExp("\\b("+pat.join("|")+")\\w*","gi");
+    return html.split(/(<[^>]+>)/).map(part=>{
+      if(part.startsWith("<")) return part;
+      return part.replace(re,"<mark>$&</mark>");
+    }).join("");
+  }
+
+  // ---- state ----
+  let activeCat = 0; // 0 = all
+  const qEl = document.getElementById("q");
+  const clearEl = document.getElementById("clear");
+  const resultsEl = document.getElementById("results");
+  const countEl = document.getElementById("count");
+
+  // build category chips
+  const cats = [...new Set(DATA.map(e=>e.section_num))].sort((a,b)=>a-b);
+  const catWrap = document.getElementById("cats");
+  function chip(label, active, cls){
+    const b=document.createElement("button");
+    b.className="chip"+(active?" active":"")+(cls?(" "+cls):"");
+    b.textContent=label; return b;
+  }
+  const allChip = chip("All", true);
+  allChip.onclick=()=>{activeCat=0;setActiveCat();render();};
+  catWrap.appendChild(allChip);
+  cats.forEach(n=>{
+    const c=chip(CAT_LABEL[n]||("Section "+n), false);
+    c.dataset.cat=n;
+    c.onclick=()=>{activeCat=n;setActiveCat();render();};
+    catWrap.appendChild(c);
+  });
+  function setActiveCat(){
+    [...catWrap.children].forEach(c=>{
+      const n = c.dataset.cat ? +c.dataset.cat : 0;
+      c.classList.toggle("active", n===activeCat);
+    });
+  }
+
+  // build starters
+  const startWrap=document.getElementById("starters");
+  STARTERS.forEach(s=>{
+    const c=chip(s,false,"starter");
+    c.onclick=()=>{qEl.value=s; onInput();};
+    startWrap.appendChild(c);
+  });
+
+  function render(){
+    const rawQ = qEl.value.trim().toLowerCase();
+    const toks = tokens(qEl.value);
+    clearEl.style.display = qEl.value ? "block":"none";
+
+    let list = DATA.filter(e=> activeCat===0 || e.section_num===activeCat);
+
+    if(toks.length || rawQ.length>2){
+      const tokRes = toks.map(t=>({re:wordRe(t), syn:(SYN[t]||[]).map(wordRe)}));
+      let scored = list.map(e=>({e, s:scoreEntry(e,tokRes,rawQ)}))
+                       .filter(x=>x.s>0)
+                       .sort((a,b)=> b.s-a.s || a.e.section_num-b.e.section_num);
+      // relevance cutoff: keep the genuinely-relevant head, drop the weak synonym tail
+      const maxS = scored.length ? scored[0].s : 0;
+      const cut = Math.max(3, maxS*0.34);
+      scored = scored.filter(x=>x.s>=cut);
+      if(scored.length>40) scored = scored.slice(0,40);
+      list = scored.map(x=>x.e);
+    } else {
+      list = list.slice().sort((a,b)=> a.section_num-b.section_num || a.id-b.id);
+    }
+
+    countEl.textContent = list.length
+      ? list.length+" "+(list.length===1?"term":"terms")+(toks.length||rawQ.length>2?" found":"")
+      : "";
+
+    if(!list.length){
+      resultsEl.innerHTML = '<div class="empty">No matches. Try fewer or different words —<br>or tap an “I\'m trying to…” starter above.</div>';
+      return;
+    }
+
+    const out = list.map(e=>{
+      const badge = CAT_LABEL[e.section_num]||e.section;
+      let h = '<div class="card">';
+      h += '<div class="top"><span class="term">'+highlight(mdToHtml(e.term),toks)+'</span>'
+         + '<span class="badge">'+esc(badge)+'</span></div>';
+      h += '<div class="row">'+highlight(mdToHtml(e.definition),toks)+'</div>';
+      if(e.example){
+        h += '<div class="ex"><span class="k">Try typing</span>'+highlight(mdToHtml(e.example),toks)+'</div>';
+      }
+      // extra (when / pitfalls / source) behind a toggle
+      let extra='';
+      if(e.when) extra+='<div class="row"><span class="k">When</span>'+highlight(mdToHtml(e.when),toks)+'</div>';
+      if(e.pitfalls) extra+='<div class="row"><span class="k">Watch out</span>'+highlight(mdToHtml(e.pitfalls),toks)+'</div>';
+      if(e.source) extra+='<div class="row src"><span class="k">Source</span>'+mdToHtml(e.source)+'</div>';
+      if(extra){
+        h += '<span class="more" data-id="'+e.id+'">＋ when to use &amp; pitfalls</span>';
+        h += '<div class="extra" id="x'+e.id+'">'+extra+'</div>';
+      }
+      h += '</div>';
+      return h;
+    }).join("");
+    resultsEl.innerHTML = out;
+
+    resultsEl.querySelectorAll(".more").forEach(m=>{
+      m.onclick=()=>{
+        const x=document.getElementById("x"+m.dataset.id);
+        const open=x.classList.toggle("open");
+        m.innerHTML=(open?"−":"＋")+" when to use &amp; pitfalls";
+      };
+    });
+  }
+
+  let t=null;
+  function onInput(){ clearTimeout(t); t=setTimeout(render,90); }
+  qEl.addEventListener("input",onInput);
+  clearEl.onclick=()=>{qEl.value="";qEl.focus();render();};
+
+  render();
+})();
+</script>
+</body>
+</html>
